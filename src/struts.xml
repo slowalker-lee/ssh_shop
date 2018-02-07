@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE struts PUBLIC
+	"-//Apache Software Foundation//DTD Struts Configuration 2.5//EN"
+	"http://struts.apache.org/dtds/struts-2.5.dtd">
+<struts>
+	<package name="shop" extends="struts-default" namespace="/">
+		<!-- 首页访问 action -->
+		<action name="index" class="indexAction">
+			<result name="index">/WEB-INF/jsp/index.jsp</result>
+		</action>
+		
+		<action name="user_*" class="userAction" method="{1}">
+			<result name="toRegisterPage">/WEB-INF/jsp/regist.jsp</result>
+			<result name="input">/WEB-INF/jsp/regist.jsp</result>
+			<result name="regist">/WEB-INF/jsp/msg.jsp</result>
+			<result name="action">/WEB-INF/jsp/success.jsp</result>
+			<result name="toLoginPage">/WEB-INF/jsp/login.jsp</result>
+			<result name="loginSuccess" type="redirectAction">index</result>
+			<result name="quit" type="redirectAction">index</result>
+			<allowed-methods>toRegisterPage,findByName,regist,active,login,toLoginPage,quit</allowed-methods>
+		</action>
+		
+		<action name="product_*" class="productAction" method="{1}">
+			<result name="findByPid">/WEB-INF/jsp/productDesc.jsp</result>
+			<result name="findByCid">/WEB-INF/jsp/productList.jsp</result>
+			<result name="findByCsid">/WEB-INF/jsp/productList.jsp</result>
+			<allowed-methods>findByPid,findByCid,findByCsid</allowed-methods>
+		</action>
+		
+		<action name="cart_*" class="cartAction" method="{1}">
+			<result name="addCart">/WEB-INF/jsp/cart.jsp</result>
+			<result name="clear">/WEB-INF/jsp/cart.jsp</result>
+			<result name="delete">/WEB-INF/jsp/cart.jsp</result>
+			<result name="showCart">/WEB-INF/jsp/cart.jsp</result>
+			<allowed-methods>addCart,clear,delete,showCart</allowed-methods>
+		</action>
+		
+		<action name="order_*" class="orderAction" method="{1}">
+			<result name="saveSuccess">/WEB-INF/jsp/order.jsp</result>
+			<result name="login">/WEB-INF/jsp/login.jsp</result>
+			<result name="findByUidSuccess">/WEB-INF/jsp/orderList.jsp</result>
+			<allowed-methods>save,findByUid</allowed-methods>
+		</action>
+	</package>
+</struts>

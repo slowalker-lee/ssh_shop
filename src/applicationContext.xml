@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+	http://www.springframework.org/schema/beans/spring-beans.xsd
+	http://www.springframework.org/schema/context
+	http://www.springframework.org/schema/context/spring-context.xsd
+	http://www.springframework.org/schema/aop
+	http://www.springframework.org/schema/aop/spring-aop.xsd
+	http://www.springframework.org/schema/tx 
+	http://www.springframework.org/schema/tx/spring-tx.xsd">
+	
+	
+	<!-- 配置连接池: -->
+	<!-- 引入外部属性文件 -->
+	<context:property-placeholder location="classpath:jdbc.properties"/>
+	<!-- 配置C3P0连接池: -->
+	<bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">
+		<property name="driverClass" value="${jdbc.driver}"/>
+		<property name="jdbcUrl" value="${jdbc.url}"/>
+		<property name="user" value="${jdbc.user}"/>
+		<property name="password" value="${jdbc.password}"/>
+	</bean>
+	
+	<!-- Hibernate的相关信息 -->
+	<bean id="sessionFactory" class="org.springframework.orm.hibernate5.LocalSessionFactoryBean">
+		<!-- 注入连接池 -->
+		<property name="dataSource" ref="dataSource"/>
+		<!-- 配置Hibernate的其他的属性 -->
+		<property name="hibernateProperties">
+			<props>
+				<prop key="hibernate.dialect">org.hibernate.dialect.MySQL57Dialect</prop>
+				<prop key="hibernate.show_sql">true</prop>
+				<prop key="hibernate.format_sql">true</prop>
+				<prop key="hibernate.connection.autocommit">false</prop>
+				<prop key="hibernate.hbm2ddl.auto">update</prop>
+			</props>
+		</property>
+		
+		<!-- 配置Hibernate的映射文件 -->
+		<property name="mappingResources">
+			<list>
+				<value>slowalker/shop/user/vo/User.hbm.xml</value>
+				<value>slowalker/shop/category/vo/Category.hbm.xml</value>
+				<value>slowalker/shop/product/vo/Product.hbm.xml</value>
+				<value>slowalker/shop/categorysecond/vo/CategorySecond.hbm.xml</value>
+				<value>slowalker/shop/order/vo/Order.hbm.xml</value>
+				<value>slowalker/shop/order/vo/OrderItem.hbm.xml</value>
+				<!-- <value>slowalker/shop/category/vo/Category.hbm.xml</value> -->
+			</list>
+		</property>
+	</bean>
+	
+	<!-- 事务管理: -->
+	<!-- 事务管理器 -->
+	<bean id="transactionManager" class="org.springframework.orm.hibernate5.HibernateTransactionManager">
+		<property name="sessionFactory" ref="sessionFactory"/>
+	</bean>
+	
+	<!-- 开启注解事务 -->
+	<tx:annotation-driven transaction-manager="transactionManager"/>
+	
+	<!-- action 配置 -->
+	<bean id="indexAction" class="slowalker.shop.index.action.IndexAction" scope="prototype">
+		<property name="categoryService" ref="categoryService"/>
+		<property name="productService" ref="productService"/>
+	</bean>
+	
+	<bean id="userAction" class="slowalker.shop.user.action.UserAction" scope="prototype">
+		<property name="userService" ref="userService"/>
+	</bean>
+	
+	<bean id="categoryAction" class="slowalker.shop.category.action.CategoryAction" scope="prototype">
+		<property name="categoryService" ref="categoryService"/>
+	</bean>
+	
+	<bean id="productAction" class="slowalker.shop.product.action.ProductAction" scope="prototype">
+		<property name="productService" ref="productService"/>
+		<property name="categoryService" ref="categoryService"></property>
+	</bean>
+	
+	<bean id="cartAction" class="slowalker.shop.cart.action.CartAction" scope="prototype">
+		<property name="productService" ref="productService"></property>
+	</bean>
+	
+	<bean id="orderAction" class="slowalker.shop.order.action.OrderAction" scope="prototype">
+		<property name="orderService" ref="orderService"></property>
+	</bean>
+	
+	<!-- ======service 配置 ===== -->
+	<bean id="userService" class="slowalker.shop.user.service.UserService">
+		<property name="userDao" ref="userDao"/>
+	</bean>
+	
+	<bean id="categoryService" class="slowalker.shop.category.service.CategoryService">
+		<property name="categoryDao" ref="categoryDao"/>
+	</bean>
+	
+	<bean id="productService" class="slowalker.shop.product.service.ProductService">
+		<property name="productDao" ref="productDao"/>
+	</bean>
+	
+	<bean id="orderService" class="slowalker.shop.order.service.OrderService">
+		<property name="orderDao" ref="orderDao"></property>
+	</bean>
+	
+	
+	<!-- =========dao 配置======= -->
+	<bean id="userDao" class="slowalker.shop.user.dao.UserDao">
+		<property name="sessionFactory" ref="sessionFactory"/>
+	</bean>
+	
+	<bean id="categoryDao" class="slowalker.shop.category.dao.CategoryDao">
+		<property name="sessionFactory" ref="sessionFactory"/>
+	</bean>
+	
+	<bean id="productDao" class="slowalker.shop.product.dao.ProductDao">
+		<property name="sessionFactory" ref="sessionFactory"/>
+	</bean>
+	
+	<bean id="orderDao" class="slowalker.shop.order.dao.OrderDao">
+		<property name="sessionFactory" ref="sessionFactory"></property>
+	</bean>
+</beans>

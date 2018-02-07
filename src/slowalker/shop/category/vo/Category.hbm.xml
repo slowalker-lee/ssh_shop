@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC 
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+	<class name="slowalker.shop.category.vo.Category" table="category">
+		<id name="cid" column="cid">
+			<generator class="native"></generator>
+		</id>
+		<property name="cname"/>
+		
+		<!-- 配置和二级分类的关系 (一对多的双向关联)-->
+		<set name="categorySeconds" lazy="false"><!-- 一级分类集合名称 可能需要修改延迟 lazy=true-->
+			<key column="cid"/><!-- 外键名称 -->
+			<one-to-many class="slowalker.shop.categorysecond.vo.CategorySecond"/>
+		</set>
+	</class>
+</hibernate-mapping>
